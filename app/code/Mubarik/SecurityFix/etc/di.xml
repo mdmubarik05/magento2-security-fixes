@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Catalog\Model\CustomOptions\CustomOptionProcessor"
+                type="Mubarik\SecurityFix\Model\CustomOptions\CustomOptionProcessor"/>
+    <type name="Mubarik\SecurityFix\Model\ImageProcessor">
+        <arguments>
+            <argument name="uploader" xsi:type="object">Mubarik\SecurityFix\Model\File\Uploader</argument>
+        </arguments>
+    </type>
+    <preference for="Mubarik\SecurityFix\Api\ImageContentUploaderInterface" type="Mubarik\SecurityFix\Model\ImageProcessor"/>
+
+    <type name="Magento\Framework\Filesystem\Directory\Write">
+        <plugin name="Mubarik_security_fix_media_write"
+                type="Mubarik\SecurityFix\Plugin\MediaWriteSecurityPlugin"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Mubarik\SecurityFix\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">MubarikSecurityFix</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Mubarik\SecurityFix\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Catalog\Model\Product\Option\Type\File">
+        <plugin name="Mubarik_security_fix_disable_file_custom_option"
+                type="Mubarik\SecurityFix\Plugin\DisableFileCustomOption"/>
+    </type>
+
+    <type name="Magento\Framework\Api\ImageProcessor">
+        <plugin name="Mubarik_security_fix_polyshell_restrict_upload_extensions"
+                type="Mubarik\SecurityFix\Plugin\ImageProcessorRestrictExtensions"/>
+    </type>
+    <type name="Magento\Framework\Api\ImageContentValidator">
+        <plugin name="Mubarik_security_fix_polyshell_validate_file_extension"
+                type="Mubarik\SecurityFix\Plugin\ImageContentValidatorExtension"/>
+    </type>
+</config>
